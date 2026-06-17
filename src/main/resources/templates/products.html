@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{template1 :: layout(~{::section})}">
+<body>
+<section>
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Product List</h4>
+            <a class="btn btn-success btn-sm" sec:authorize="hasRole('ADMIN')"
+               th:href="@{/newProduct}"><i class="bi bi-plus-lg"></i> Add</a>
+        </div>
+        <div class="card-body">
+            <form method="get" th:action="@{/products}" class="row g-2 mb-3">
+                <div class="col-auto">
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                           placeholder="Search by name...">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+                </div>
+            </form>
+            <table class="table table-striped table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Price</th><th>Quantity</th>
+                    <th sec:authorize="hasRole('ADMIN')">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${productList}">
+                    <td th:text="${product.id}"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.price}"></td>
+                    <td th:text="${product.quantity}"></td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <a class="btn btn-warning btn-sm"
+                           th:href="@{/editProduct(id=${product.id})}"><i class="bi bi-pencil"></i></a>
+                        <a class="btn btn-danger btn-sm"
+                           th:href="@{/deleteProduct(id=${product.id}, keyword=${keyword})}"
+                           onclick="return confirm('Delete this product?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${productList.isEmpty()}">
+                    <td colspan="5" class="text-center text-muted">No products found</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
